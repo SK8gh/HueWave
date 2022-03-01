@@ -1,1 +1,3 @@
-# Adding the configuration file to check if commit is working on the develop branch
+# Configuration
+
+colors = ["blue", "red", "green", "orange", "yellow", "purple", "pink"]
