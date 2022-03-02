@@ -27,7 +27,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
-  <component name="RunManager" selected="Python.color_wave_mapping">
+  <component name="RunManager" selected="Python.main">
     <configuration name="color_wave_mapping" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="HueWave" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -72,8 +72,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.color_wave_mapping" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.color_wave_mapping" />
       </list>
     </recent_temporary>
   </component>

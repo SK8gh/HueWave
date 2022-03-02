@@ -8,15 +8,18 @@ import cv2
 
 class ColorWave:
     def __init__(self, img):
+        """
+        initializing the ColorWave class using an image
+        :param img:
+        """
         self.colors_rgb = pd.read_csv("colors.csv", names=["color_name", "name_drop", "code", "R", "G", "B"])
         self.colors_rgb = self.colors_rgb.drop(["name_drop", "code"], axis=1)
 
+        self.color_chords = config.color_chords
         self.colors = config.colors
         self.img = img
 
-        print(self.colors_rgb)
-
-    def get_color_palette(self, nb_colors):
+    def get_color_palette(self, nb_colors=10):
         """
         getting the main colors in self.img using the ColorThief class
         :param nb_colors:
@@ -42,37 +45,53 @@ class ColorWave:
             distances[k] = abs(p1 - r) + abs(p2 - g) + abs(p3 - b)
         self.colors_rgb["color_presence"] = 100 / distances
 
-    def get_colors(self):
+    def get_colors(self, tail_factor=10):
+        """
+        getting the 2 (max) most present colors
+        :param tail_factor:
+        :return:
+        """
         self.colors_rgb = self.colors_rgb.sort_values("color_presence")
-        print(self.colors_rgb[["color_name"]].tail(10))
+        top_colors_vals = self.colors_rgb[["color_name"]].tail(tail_factor).values
 
-    def map_colors(self):
-        pass
+        # Making the list cleaner
+        top_colors = [color_val[0] for color_val in top_colors_vals]
 
+        # colors in the config are less elaborate than the ones in colors.csv thus we have to refine the top_colors list
+        top_config_colors = []
+        for color_str in config.colors:
+            for top_color in top_colors:
+                if color_str in top_color:
+                    top_config_colors.append(color_str)
+        return list(set(top_config_colors))[:2]
 
-C = ColorWave("sverige.jpg")
+    def get_chord(self, top_colors):
+        """
+        get chord associated to the top_colors list
+        :param top_colors:
+        :return:
+        """
+        if len(top_colors) == 1:
+            return self.color_chords[top_colors]
 
-palette_colors = C.get_color_palette(10)
+        elif len(top_colors) == 2:
+            str_request = top_colors[0] + "&" + top_colors[1]
+            return self.color_chords[str_request]
 
-C.distance_img_palette(palette_colors[0])
+        else:
+            raise ValueError(f"top_colors : {top_colors} must have length < 3")
 
-C.get_colors()
+    def process_mapping(self):
+        """
+        provided with a self object containing an image at initialization, this method returns the associated chord
+        :return:
+        """
+        # getting palette using ColorThief
+        palette_colors = self.get_color_palette(10)
 
+        # getting distances
+        self.distance_img_palette(palette_colors[0])
+        detected_colors = self.get_colors()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        chord = self.get_chord(detected_colors)
+        return chord
