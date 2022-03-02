@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from colorthief import ColorThief
 import config as config
 import pandas as pd
 import numpy as np
@@ -6,10 +7,6 @@ import cv2
 
 
 class ColorWave:
-    """
-    docstring
-    """
-
     def __init__(self, img):
         self.colors_rgb = pd.read_csv("colors.csv", names=["color_name", "name_drop", "code", "R", "G", "B"])
         self.colors_rgb = self.colors_rgb.drop(["name_drop", "code"], axis=1)
@@ -17,45 +14,65 @@ class ColorWave:
         self.colors = config.colors
         self.img = img
 
-    def distance_img_color(self, rgb_color):
+        print(self.colors_rgb)
+
+    def get_color_palette(self, nb_colors):
+        """
+        getting the main colors in self.img using the ColorThief class
+        :param nb_colors:
+        :return: palette (list of tuples)
+        """
+        color_thief = ColorThief(self.img)
+        palette = color_thief.get_palette(color_count=nb_colors)
+        return palette
+
+    def distance_img_palette(self, palette_color):
         """
         implementing a distance metric between an image and a (r,g,b) vector
+        :param palette_color:
         :return: distance value
         """
-        if not len(rgb_color) == 3:
-            raise Exception(f"rgb_color argument must have length 3 but has length {len(rgb_color)}")
+        len_csv = len(self.colors_rgb)
+        distances = np.zeros([len_csv])
 
-        img, img_shape = self.img, self.img.shape
-        red, blue, green = rgb_color
+        for k in range(len_csv):
+            p1, p2, p3 = palette_color
+            r, g, b = self.colors_rgb[["R", "G", "B"]].iloc[k]
 
-        return 0
-        dist = np.dot(self.img, rgb_color)
-
-        return dist
+            distances[k] = abs(p1 - r) + abs(p2 - g) + abs(p3 - b)
+        self.colors_rgb["color_presence"] = 100 / distances
 
     def get_colors(self):
-        pass
+        self.colors_rgb = self.colors_rgb.sort_values("color_presence")
+        print(self.colors_rgb[["color_name"]].tail(10))
 
     def map_colors(self):
         pass
 
 
-img_test = cv2.imread("sverige.jpg")
+C = ColorWave("sverige.jpg")
 
-print(f"shape = {img_test.shape}")
+palette_colors = C.get_color_palette(10)
 
-CW = ColorWave(img_test)
+C.distance_img_palette(palette_colors[0])
 
-CW.colors_rgb["color_presence"] = np.zeros([len(CW.colors_rgb)])
+C.get_colors()
 
-for k, row in enumerate(CW.colors_rgb[["R", "G", "B"]].itertuples()):
-    r, g, b = row.R, row.G, row.B
 
-    distance = CW.distance_img_color((r, g, b))
 
-    CW.colors_rgb.loc[k, "color_presence"] = distance
 
-    CW.colors_rgb = CW.colors_rgb.sort_values("color_presence")
 
-print(CW.colors_rgb.tail(10))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
