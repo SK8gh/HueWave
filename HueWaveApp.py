@@ -12,13 +12,14 @@ class HueWave(App):
     """
     def __init__(self):
         super().__init__()
-        self.label = Label(text="Text?")
         self.window = GridLayout()
 
     def build(self):
         self.window.cols = 1
 
         self.window.add_widget(Image(source="sverige.jpg"))
-        self.window.add_widget(self.label)
 
         return self.window
+
+# chord = ColorWave("sverige.jpg").process_mapping()
+# print(chord)

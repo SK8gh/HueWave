@@ -1,9 +1,7 @@
-import matplotlib.pyplot as plt
 from colorthief import ColorThief
 import config as config
 import pandas as pd
 import numpy as np
-import cv2
 
 
 class ColorWave:
@@ -19,7 +17,7 @@ class ColorWave:
         self.colors = config.colors
         self.img = img
 
-    def get_color_palette(self, nb_colors=10):
+    def _get_color_palette(self, nb_colors=2):
         """
         getting the main colors in self.img using the ColorThief class
         :param nb_colors:
@@ -29,30 +27,38 @@ class ColorWave:
         palette = color_thief.get_palette(color_count=nb_colors)
         return palette
 
-    def distance_img_palette(self, palette_color):
+    def _distance_img_palette_color(self, palette_color):
         """
         implementing a distance metric between an image and a (r,g,b) vector
         :param palette_color:
         :return: distance value
         """
+        palette_color = palette_color[:2]
         len_csv = len(self.colors_rgb)
-        distances = np.zeros([len_csv])
 
-        for k in range(len_csv):
-            p1, p2, p3 = palette_color
-            r, g, b = self.colors_rgb[["R", "G", "B"]].iloc[k]
+        for p, p_color in enumerate(palette_color):
+            distances = np.zeros([len_csv])
+            for k, line in enumerate(self.colors_rgb.itertuples()):
+                p1, p2, p3 = p_color
+                r, g, b = line.R, line.G, line.B
 
-            distances[k] = abs(p1 - r) + abs(p2 - g) + abs(p3 - b)
-        self.colors_rgb["color_presence"] = 100 / distances
+                distances[k] = abs(p1 - r) + abs(p2 - g) + abs(p3 - b)
+            self.colors_rgb["color_presence_" + str(p)] = 100 / distances
 
-    def get_colors(self, tail_factor=10):
+    def _get_colors(self, tail_factor=3):
         """
         getting the 2 (max) most present colors
         :param tail_factor:
         :return:
         """
-        self.colors_rgb = self.colors_rgb.sort_values("color_presence")
-        top_colors_vals = self.colors_rgb[["color_name"]].tail(tail_factor).values
+        top_colors_vals = []
+        df_cols = self.colors_rgb.columns
+
+        for column in df_cols:
+            if "color_presence" not in column:
+                continue
+            self.colors_rgb = self.colors_rgb.sort_values(column)
+            top_colors_vals.extend(self.colors_rgb[["color_name"]].tail(tail_factor).values)
 
         # Making the list cleaner
         top_colors = [color_val[0] for color_val in top_colors_vals]
@@ -65,21 +71,28 @@ class ColorWave:
                     top_config_colors.append(color_str)
         return list(set(top_config_colors))[:2]
 
-    def get_chord(self, top_colors):
+    def _get_chord(self, top_colors):
         """
         get chord associated to the top_colors list
         :param top_colors:
         :return:
         """
-        if len(top_colors) == 1:
-            return self.color_chords[top_colors]
+        if len(top_colors) > 3:
+            raise ValueError(f"top_colors : {top_colors} must have length < 3")
+
+        elif len(top_colors) == 1:
+            return self.color_chords[top_colors[0]]
 
         elif len(top_colors) == 2:
-            str_request = top_colors[0] + "&" + top_colors[1]
-            return self.color_chords[str_request]
-
-        else:
-            raise ValueError(f"top_colors : {top_colors} must have length < 3")
+            try:
+                str_request = top_colors[0] + "&" + top_colors[1]
+                return self.color_chords[str_request]
+            except KeyError:
+                try:
+                    str_request = top_colors[1] + "&" + top_colors[0]
+                    return self.color_chords[str_request]
+                except KeyError:
+                    return
 
     def process_mapping(self):
         """
@@ -87,11 +100,15 @@ class ColorWave:
         :return:
         """
         # getting palette using ColorThief
-        palette_colors = self.get_color_palette(10)
+        palette_colors = self._get_color_palette()
 
         # getting distances
-        self.distance_img_palette(palette_colors[0])
-        detected_colors = self.get_colors()
+        self._distance_img_palette_color(palette_colors)
 
-        chord = self.get_chord(detected_colors)
-        return chord
+        # detecting top colors in the image
+        detected_top_colors = self._get_colors()
+
+        # returning chords using the determined mapping
+        result_chords = self._get_chord(detected_top_colors)
+
+        return result_chords
