@@ -27,7 +27,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
-  <component name="RunManager" selected="Python.color_wave_mapping">
+  <component name="RunManager" selected="Python.main">
     <configuration name="color_wave_mapping" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="HueWave" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -104,5 +104,21 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file:///Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/kivy/lang/parser.py</url>
+          <line>494</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file:///Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/kivy/lang/parser.py</url>
+          <line>496</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
