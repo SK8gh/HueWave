@@ -44,7 +44,7 @@ class CameraClick(BoxLayout):
 
         # TODO: fix, do not export, just save in a variable
         camera.export_to_png(path_saved_img)
-        print("Captured")
+        print("click!")
 
         chord = ColorWave(path_saved_img).process_mapping()
         print(chord)
