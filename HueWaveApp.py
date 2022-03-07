@@ -6,62 +6,50 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
+from kivy.graphics.texture import Texture
+from kivy.clock import Clock
 import time
+import cv2
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.properties import ObjectProperty
+
 from color_wave_mapping import ColorWave
 
-Builder.load_string('''
-<CameraClick>:
-    orientation: 'vertical'
-    Camera:
-        id: camera
-        resolution: (640, 480)
-        play: True
-    Button:
-        text: 'Capture'
-        size_hint_y: None
-        height: '48dp'
-        on_press: root.capture()
-''')
+
+class ImageButton(ButtonBehavior, Image):
+    preview = ObjectProperty(None)
+
+    def on_press(self):
+        cv2.namedWindow("CV2 Image")
+        cv2.imshow("CV2 Image", self.preview.frame)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 
-class CameraClick(BoxLayout):
+class CameraPreview(Image):
     def __init__(self, **kwargs):
-        self.last_img_captured, self.last_chord = None, None
-        super().__init__(**kwargs)
+        super(CameraPreview, self).__init__(**kwargs)
 
-    def capture(self):
-        """
-        Function to capture the images and give them the names
-        according to their captured time and date
-        :return:
-        """
-        camera = self.ids['camera']
-        time_str = time.strftime("%Y%m%d_%H%M%S")
+        self.frame = None
+        self.capture = cv2.VideoCapture(0)
 
-        path_saved_img = "IMG_{}.png".format(time_str)
+        Clock.schedule_interval(self.update, 1.0 / 30)
 
-        d = dir(camera)
-
-        # TODO: fix, do not export, just save in a variable
-        camera.export_to_png(path_saved_img)
-        print("click!")
-
-        chord = ColorWave(path_saved_img).process_mapping()
-        print(chord)
+    def update(self, dt):
+        ret, self.frame = self.capture.read()
+        buf = cv2.flip(self.frame, 0).tostring()
+        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr')
+        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        print(self.frame)
+        self.texture = texture
 
 
-class HueWave(App):
+class MyCameraApp(App):
     def build(self):
-        return CameraClick()
+        return CameraPreview()
 
 
-HueWave().run()
-
-
-
-
-
-
-
+if __name__ == '__main__':
+    MyCameraApp().run()
 
 

@@ -94,7 +94,7 @@ class ColorWave:
                 except KeyError:
                     return
 
-    def process_mapping(self):
+    def process_mapping(self, print_detected_colors=False):
         """
         provided with a self object containing an image at initialization, this method returns the associated chord
         :return:
@@ -107,6 +107,9 @@ class ColorWave:
 
         # detecting top colors in the image
         detected_top_colors = self._get_colors()
+
+        if print_detected_colors:
+            print(f"detected colors : {detected_top_colors}")
 
         # returning chords using the determined mapping
         result_chords = self._get_chord(detected_top_colors)
