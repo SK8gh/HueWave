@@ -2,5 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/fast-colorthief" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/fast-colorthief/pybind11" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/fastcolorthief/fast-colorthief" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/fastcolorthief/fast-colorthief/pybind11" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/fastcolorthief/fastcolorthief" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/fastcolorthief/fastcolorthief/pybind11" vcs="Git" />
   </component>
 </project>
