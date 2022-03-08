@@ -14,24 +14,29 @@ import numpy as np
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.properties import ObjectProperty
 
-from color_wave_mapping import ColorWave, ImageCT
+from color_wave_mapping import ColorWave
 from PIL import Image as ImagePil
+
 
 class CameraPreview(Image):
     def __init__(self, **kwargs):
         super(CameraPreview, self).__init__(**kwargs)
 
         self.frame = None
+        self.screenshot_path = "screenshot.jpg"
         self.capture = cv2.VideoCapture(0)
 
-        time.sleep(1)
-        screenshot = self.update("")
+        while True:
+            time.sleep(1)
+            screenshot = self.update("")
 
-        screenshot_ct = np.array(screenshot)
+            # I didn't find a better method than saving the file (it'll be replaced for every image evaluation) and
+            # opening it afterwards using ImagePil
+            img = ImagePil.fromarray(np.array(screenshot), "RGB")
+            img.save(self.screenshot_path)
 
-        screenshot_ct = ImagePil.fromarray(screenshot_ct)
-        chord = ColorWave(screenshot_ct).process_mapping(print_detected_colors=True)
-        print(chord)
+            chord = ColorWave(self.screenshot_path).process_mapping(print_detected_colors=True)
+            print(f"chord : {chord}")
 
     def update(self, dt):
         ret, self.frame = self.capture.read()

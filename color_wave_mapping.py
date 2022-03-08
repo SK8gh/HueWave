@@ -5,18 +5,6 @@ import numpy as np
 from PIL import Image
 
 
-class ImageCT:
-    def __init__(self, img):
-        """
-        Implements the read, seek, tell functions such that we can pass instances to the ColorThief library
-        :param img:
-        """
-        self.img = Image.open(img)
-
-    def read(self):
-        return self.img
-
-
 class ColorWave:
     def __init__(self, img):
         """
@@ -36,9 +24,8 @@ class ColorWave:
         :param nb_colors:
         :return: palette (list of tuples)
         """
-        color_thief = ColorThief.get_palette(self.img)
-        palette = color_thief.get_palette(color_count=nb_colors)
-        return palette
+        color_thief = ColorThief(self.img)
+        return color_thief.get_palette()
 
     def _distance_img_palette_color(self, palette_color):
         """
