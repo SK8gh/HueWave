@@ -13,6 +13,7 @@ import cv2
 import numpy as np
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.properties import ObjectProperty
+import matplotlib.pyplot as plt
 
 from color_wave_mapping import ColorWave
 from PIL import Image as ImagePil
@@ -26,17 +27,10 @@ class CameraPreview(Image):
         self.screenshot_path = "screenshot.jpg"
         self.capture = cv2.VideoCapture(0)
 
-        while True:
-            time.sleep(1)
-            screenshot = self.update("")
+        Clock.schedule_interval(self.update, 2)
 
-            # I didn't find a better method than saving the file (it'll be replaced for every image evaluation) and
-            # opening it afterwards using ImagePil
-            img = ImagePil.fromarray(np.array(screenshot), "RGB")
-            img.save(self.screenshot_path)
-
-            chord = ColorWave(self.screenshot_path).process_mapping(print_detected_colors=True)
-            print(f"chord : {chord}")
+        # I didn't find a better method than saving the file (it'll be replaced for every image evaluation) and
+        # opening it afterwards using ImagePil
 
     def update(self, dt):
         ret, self.frame = self.capture.read()
@@ -45,7 +39,12 @@ class CameraPreview(Image):
         texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
         self.texture = texture
 
-        return self.frame
+        screenshot = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+        img = ImagePil.fromarray(np.array(screenshot), "RGB")
+        img.save(self.screenshot_path)
+
+        chord = ColorWave(self.screenshot_path).process_mapping(print_detected_colors=True)
+        print(f"chord : {chord}")
 
 
 class MyCameraApp(App):
