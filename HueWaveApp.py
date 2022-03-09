@@ -7,9 +7,11 @@ from kivy.uix.textinput import TextInput
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics.texture import Texture
+from playsound import playsound
 from kivy.clock import Clock
 import time
 import cv2
+import config as config
 import numpy as np
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.properties import ObjectProperty
@@ -23,28 +25,43 @@ class CameraPreview(Image):
     def __init__(self, **kwargs):
         super(CameraPreview, self).__init__(**kwargs)
 
-        self.frame = None
-        self.screenshot_path = "screenshot.jpg"
+        self._frame = None
+        self._update_rate = 20  # camera view update rate (in seconds)
+        self._screenshot_path = "screenshot.jpg"
+
+        self.previous_chord = None
         self.capture = cv2.VideoCapture(0)
 
-        Clock.schedule_interval(self.update, 2)
+        # running the self.update function every self._update_rate seconds
+        Clock.schedule_interval(self.update, self._update_rate)
 
-        # I didn't find a better method than saving the file (it'll be replaced for every image evaluation) and
-        # opening it afterwards using ImagePil
+    def play_chord(self):
+        chord_value = self.previous_chord
+        chord_mp3_path = config.chords_mp3_files[chord_value]
+        playsound(chord_mp3_path)
+        return
 
     def update(self, dt):
-        ret, self.frame = self.capture.read()
-        buf = cv2.flip(self.frame, 0).tostring()
-        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr')
+        """
+        updating the camera view and changing the mapped chord if necessary
+        :param dt:
+        :return:
+        """
+        ret, self._frame = self.capture.read()
+        buf = cv2.flip(self._frame, 0).tostring()
+        texture = Texture.create(size=(self._frame.shape[1], self._frame.shape[0]), colorfmt='bgr')
         texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
         self.texture = texture
 
-        screenshot = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+        screenshot = cv2.cvtColor(self._frame, cv2.COLOR_BGR2RGB)
         img = ImagePil.fromarray(np.array(screenshot), "RGB")
-        img.save(self.screenshot_path)
+        img.save(self._screenshot_path)
 
-        chord = ColorWave(self.screenshot_path).process_mapping(print_detected_colors=True)
-        print(f"chord : {chord}")
+        chord = ColorWave(self._screenshot_path).process_mapping(print_detected_colors=True)
+        if chord != self.previous_chord:
+            self.previous_chord = chord
+
+            self.play_chord()
 
 
 class MyCameraApp(App):

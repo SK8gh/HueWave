@@ -1,8 +1,8 @@
 from colorthief import ColorThief
 import config as config
+from PIL import Image
 import pandas as pd
 import numpy as np
-from PIL import Image
 
 
 class ColorWave:
