@@ -1,24 +1,13 @@
-from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.image import Image
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.lang import Builder
-from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics.texture import Texture
-from playsound import playsound
-from kivy.clock import Clock
-import time
-import cv2
-import config as config
-import numpy as np
-from kivy.uix.behaviors import ButtonBehavior
-from kivy.properties import ObjectProperty
-import matplotlib.pyplot as plt
-
 from color_wave_mapping import ColorWave
 from PIL import Image as ImagePil
+from kivy.uix.image import Image
+from playsound import playsound
+from kivy.clock import Clock
+from kivy.app import App
+import config as config
+import numpy as np
+import cv2
 
 
 class CameraPreview(Image):

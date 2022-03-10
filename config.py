@@ -19,5 +19,3 @@ chords_mp3_files = {'Am': 'Am.mp3', 'Bm': 'Bm.mp3', 'C': 'C.mp3', 'D7': 'D7.mp3'
                     'Bsus4/E': 'Bsus4/E.mp3', 'B/F#': 'B/F#.mp3', 'Gm/B': 'Gm/B.mp3', 'Cm/D': 'Cm/D.mp3',
                     'C#/E': 'C#/E.mp3', 'C#7/F': 'C#7/F.mp3', 'G#7/C': 'G#7/C.mp3', 'Dm/E': 'Dm/E.mp3',
                     'D/F#': 'D/F#.mp3', 'D/G': 'D/G.mp3', 'F#m/E': 'F#m/E.mp3', 'Em/G#': 'Em/G#.mp3', 'F/G': 'F/G.mp3'}
-
-
