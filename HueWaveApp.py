@@ -15,19 +15,20 @@ class CameraPreview(Image):
         super(CameraPreview, self).__init__(**kwargs)
 
         self._frame = None
-        self._update_rate = 20  # camera view update rate (in seconds)
+        self._update_rate = 3  # camera view update rate (in seconds)
         self._screenshot_path = "screenshot.jpg"
 
-        self.previous_chord = None
+        self.previous_chord_path = None
         self.capture = cv2.VideoCapture(0)
 
         # running the self.update function every self._update_rate seconds
         Clock.schedule_interval(self.update, self._update_rate)
 
     def play_chord(self):
-        chord_value = self.previous_chord
-        chord_mp3_path = config.chords_mp3_files[chord_value]
-        playsound(chord_mp3_path)
+        play_path = self.previous_chord_path
+
+        if play_path is not None:
+            playsound(config.sounds_file_name + self.previous_chord_path)
         return
 
     def update(self, dt):
@@ -46,9 +47,9 @@ class CameraPreview(Image):
         img = ImagePil.fromarray(np.array(screenshot), "RGB")
         img.save(self._screenshot_path)
 
-        chord = ColorWave(self._screenshot_path).process_mapping(print_detected_colors=True)
-        if chord != self.previous_chord:
-            self.previous_chord = chord
+        chord_path = ColorWave(self._screenshot_path).process_mapping(print_detected_colors=True)
+        if chord_path != self.previous_chord_path:
+            self.previous_chord_path = chord_path
 
             self.play_chord()
 

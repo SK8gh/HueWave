@@ -1,6 +1,5 @@
 from colorthief import ColorThief
 import config as config
-from PIL import Image
 import pandas as pd
 import numpy as np
 
@@ -14,7 +13,7 @@ class ColorWave:
         self.colors_rgb = pd.read_csv("colors.csv", names=["color_name", "name_drop", "code", "R", "G", "B"])
         self.colors_rgb = self.colors_rgb.drop(["name_drop", "code"], axis=1)
 
-        self.color_chords = config.color_chords
+        self.mapping_color_path = config.mapping_color_path
         self.colors = config.colors
         self.img = img
 
@@ -71,7 +70,7 @@ class ColorWave:
                     top_config_colors.append(color_str)
         return list(set(top_config_colors))[:2]
 
-    def _get_chord(self, top_colors):
+    def _get_chord_path(self, top_colors):
         """
         get chord associated to the top_colors list
         :param top_colors:
@@ -81,16 +80,16 @@ class ColorWave:
             raise ValueError(f"top_colors : {top_colors} must have length < 3")
 
         elif len(top_colors) == 1:
-            return self.color_chords[top_colors[0]]
+            return self.mapping_color_path[top_colors[0]]
 
         elif len(top_colors) == 2:
             try:
                 str_request = top_colors[0] + "&" + top_colors[1]
-                return self.color_chords[str_request]
+                return self.mapping_color_path[str_request]
             except KeyError:
                 try:
                     str_request = top_colors[1] + "&" + top_colors[0]
-                    return self.color_chords[str_request]
+                    return self.mapping_color_path[str_request]
                 except KeyError:
                     return
 
@@ -112,6 +111,6 @@ class ColorWave:
             print(f"detected colors : {detected_top_colors}")
 
         # returning chords using the determined mapping
-        result_chords = self._get_chord(detected_top_colors)
+        chord_path = self._get_chord_path(detected_top_colors)
 
-        return result_chords
+        return chord_path
