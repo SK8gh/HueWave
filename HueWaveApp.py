@@ -10,12 +10,12 @@ import numpy as np
 import cv2
 
 
-class CameraPreview(Image):
+class CCmap(Image):
     def __init__(self, **kwargs):
-        super(CameraPreview, self).__init__(**kwargs)
+        super(CCmap, self).__init__(**kwargs)
 
         self._frame = None
-        self._update_rate = 3  # camera view update rate (in seconds)
+        self._update_rate = config.update_rate  # camera view update rate (in seconds)
         self._screenshot_path = "screenshot.jpg"
 
         self.previous_chord_path = None
@@ -54,12 +54,6 @@ class CameraPreview(Image):
             self.play_chord()
 
 
-class MyCameraApp(App):
+class HueWaveApp(App):
     def build(self):
-        return CameraPreview()
-
-
-if __name__ == '__main__':
-    MyCameraApp().run()
-
-
+        return CCmap()

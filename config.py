@@ -15,3 +15,5 @@ mapping_color_path = {"blue": "bleu.wav", "red": "rouge.wav", "green": "vert.wav
                       "purple&pink": "violet-rose.wav"}
 
 sounds_file_name = "chords/"
+
+update_rate = 20

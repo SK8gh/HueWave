@@ -28,7 +28,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.HueWaveApp">
+  <component name="RunManager" selected="Python.main">
     <configuration name="HueWaveApp" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="HueWave" />
       <option name="INTERPRETER_OPTIONS" value="" />
